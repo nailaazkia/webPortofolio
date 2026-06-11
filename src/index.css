@@ -1,0 +1,389 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --scroll-pos: 0;
+  --background: #09090b;
+  --surface: #0f0f10;
+  --surface-container: #18181b;
+  --surface-container-low: #121214;
+  --surface-container-lowest: #080809;
+  --surface-variant: #27272a;
+  --on-surface: #f5f3f4;
+  --on-surface-variant: #a1a1aa;
+  --outline: #3f3f46;
+  --outline-variant: #27272a;
+  --primary: #d946ef;
+  --primary-hover: #c084fc;
+  --secondary: #f472b6;
+  --tertiary: #ec4899;
+}
+
+.light {
+  --background: #f8fafc;
+  --surface: #ffffff;
+  --surface-container: #f1f5f9;
+  --surface-container-low: #e2e8f0;
+  --surface-container-lowest: #ffffff;
+  --surface-variant: #cbd5e1;
+  --on-surface: #0f172a;
+  --on-surface-variant: #64748b;
+  --outline: #cbd5e1;
+  --outline-variant: #e2e8f0;
+  --primary: #c026d3;
+  --primary-hover: #d946ef;
+  --secondary: #db2777;
+  --tertiary: #be185d;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--on-surface);
+  font-family: 'Inter', sans-serif;
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Background Grid with subtle pink/fuchsia accents */
+#bg-grid {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(circle at 2px 2px, rgba(217, 70, 239, 0.08) 1.5px, transparent 0);
+  background-size: 30px 30px;
+  transform: translateY(calc(var(--scroll-pos) * 0.05px));
+  z-index: -1;
+  pointer-events: none;
+}
+
+.light #bg-grid {
+  background-image: radial-gradient(circle at 2px 2px, rgba(217, 70, 239, 0.05) 1.5px, transparent 0);
+}
+
+/* Glassmorphism card styles with Fuchsia borders on hover */
+.glass-card {
+  background: rgba(18, 18, 20, 0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(217, 70, 239, 0.08);
+  transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.light .glass-card {
+  background: rgba(255, 255, 255, 0.75);
+  border-color: rgba(217, 70, 239, 0.12);
+}
+
+.glass-card:hover {
+  border-color: rgba(217, 70, 239, 0.25);
+  box-shadow: 0 10px 40px -10px rgba(217, 70, 239, 0.15);
+  transform: translateY(-4px);
+}
+
+.light .glass-card:hover {
+  border-color: rgba(217, 70, 239, 0.3);
+  box-shadow: 0 10px 40px -10px rgba(217, 70, 239, 0.12);
+}
+/* Custom Typography & Container overrides for large screens (24-inch fit) */
+.text-display {
+  font-size: 4.5rem !important;
+  line-height: 1.1 !important;
+  letter-spacing: -0.02em !important;
+}
+.text-headline-lg {
+  font-size: 3rem !important;
+  line-height: 1.2 !important;
+  letter-spacing: -0.01em !important;
+}
+.text-headline-md {
+  font-size: 1.5rem !important;
+  line-height: 1.3 !important;
+}
+.text-body-lg {
+  font-size: 1.125rem !important;
+  line-height: 1.75 !important;
+}
+.text-body-md {
+  font-size: 1rem !important;
+  line-height: 1.6 !important;
+}
+.text-label-md {
+  font-size: 0.875rem !important;
+  line-height: 1.5 !important;
+  letter-spacing: 0.05em !important;
+}
+.max-w-container-max {
+  max-width: 1500px !important;
+}
+
+/* Fix Tailwind class mappings for CSS variables containing hex colors */
+.bg-background { background-color: var(--background) !important; }
+.bg-surface { background-color: var(--surface) !important; }
+.bg-surface-container { background-color: var(--surface-container) !important; }
+.bg-surface-container-lowest { background-color: var(--surface-container-lowest) !important; }
+
+.text-on-surface { color: var(--on-surface) !important; }
+.text-on-surface-variant { color: var(--on-surface-variant) !important; }
+.text-primary { color: var(--primary) !important; }
+
+.border-outline { border-color: var(--outline) !important; }
+.border-outline-variant { border-color: var(--outline-variant) !important; }
+
+/* Overrides for hardcoded tailwind classes in light mode */
+.light .bg-zinc-950,
+.light .bg-zinc-950\/50,
+.light .bg-zinc-950\/20,
+.light .bg-zinc-950\/45 {
+  background-color: var(--surface) !important;
+}
+
+.light .bg-zinc-900,
+.light .bg-zinc-900\/10,
+.light .bg-zinc-900\/20,
+.light .bg-zinc-900\/30,
+.light .bg-zinc-900\/40 {
+  background-color: var(--surface-container) !important;
+}
+
+.light .border-white\/5 {
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+.light .border-white\/10 {
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.light .text-white\/40 {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.light .bg-white\/5 {
+  background-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+.light .hover\:bg-white\/5:hover {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+.light .bg-white\/10 {
+  background-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+.light .hover\:bg-white\/10:hover {
+  background-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Fix: border-y in light mode */
+.light .border-y {
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Fix: bg-background with opacity (Tailwind can't apply opacity to CSS vars) */
+.light .bg-background\/40 {
+  background-color: rgba(248, 250, 252, 0.6) !important;
+}
+
+.light .bg-background\/85 {
+  background-color: rgba(248, 250, 252, 0.92) !important;
+}
+
+.light .bg-background\/95 {
+  background-color: rgba(248, 250, 252, 0.97) !important;
+}
+
+/* Fix: bg-surface-container with opacity */
+.light .bg-surface-container\/60 {
+  background-color: rgba(241, 245, 249, 0.7) !important;
+}
+
+.light .bg-surface-container-lowest\/30 {
+  background-color: rgba(255, 255, 255, 0.45) !important;
+}
+
+/* Fix: black overlays in light mode */
+.light .bg-black\/60 {
+  background-color: rgba(0, 0, 0, 0.45) !important;
+}
+
+.light .bg-black\/40 {
+  background-color: rgba(0, 0, 0, 0.25) !important;
+}
+
+.light .hover\:bg-black\/80:hover {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Fix: primary with opacity */
+.light .bg-primary\/5,
+.light .bg-primary\/3,
+.light .bg-primary\/2 {
+  background-color: rgba(192, 38, 211, 0.04) !important;
+}
+
+.light .bg-primary\/10 {
+  background-color: rgba(192, 38, 211, 0.1) !important;
+}
+
+.light .hover\:bg-primary\/20:hover {
+  background-color: rgba(192, 38, 211, 0.15) !important;
+}
+
+.light .border-primary\/20 {
+  border-color: rgba(192, 38, 211, 0.2) !important;
+}
+
+.light .hover\:border-primary\/20:hover {
+  border-color: rgba(192, 38, 211, 0.25) !important;
+}
+
+/* Fix: secondary with opacity */
+.light .bg-secondary\/5,
+.light .bg-secondary\/2 {
+  background-color: rgba(219, 39, 119, 0.04) !important;
+}
+
+/* Fix: prose-invert should not apply in light mode */
+.light .prose-invert {
+  --tw-prose-body: var(--on-surface-variant);
+  --tw-prose-headings: var(--on-surface);
+  color: var(--on-surface-variant);
+}
+
+/* Fix: h1 select-none text color */
+.light h1,
+.light h2,
+.light h3 {
+  color: var(--on-surface);
+}
+
+/* Fix: grayscale portrait in light mode - slightly lighter */
+.light .filter.grayscale {
+  filter: grayscale(1) contrast(0.95);
+}
+
+/* Fix: gradient-to-t on modal image in light mode */
+.light .from-zinc-950 {
+  --tw-gradient-from: var(--surface) !important;
+}
+
+.light .via-zinc-950\/20 {
+  --tw-gradient-via: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Fix: input placeholder text in light mode */
+.light input::placeholder,
+.light textarea::placeholder {
+  color: #94a3b8;
+}
+
+/* Fix: Focus ring adjustments for light mode inputs */
+.light .focus\:border-primary\/50:focus {
+  border-color: rgba(192, 38, 211, 0.4) !important;
+}
+
+.light .focus\:ring-primary\/20:focus {
+  --tw-ring-color: rgba(192, 38, 211, 0.15) !important;
+}
+
+/* Custom premium fuchsia pink gradients */
+.fuchsia-gradient {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--tertiary) 100%);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-fill-color: transparent;
+  color: transparent;
+}
+
+/* Spotlight cursor effect using Fuchsia tint */
+.custom-spotlight {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  background: radial-gradient(450px circle at var(--x) var(--y), rgba(217, 70, 239, 0.06), transparent 80%);
+  z-index: 9999;
+  transition: opacity 0.3s ease;
+}
+
+.light .custom-spotlight {
+  background: radial-gradient(450px circle at var(--x) var(--y), rgba(217, 70, 239, 0.03), transparent 80%);
+}
+
+/* Custom smooth-scroll adjustments */
+html.lenis {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* Custom premium scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(217, 70, 239, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(217, 70, 239, 0.4);
+}
+
+/* Material Symbols customization */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Animations helper */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Smooth transition for theme-changeable elements - only on direct theme property containers */
+.light body,
+.light nav,
+.light section,
+.light footer,
+.light .glass-card,
+.light input,
+.light textarea,
+.light button {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+

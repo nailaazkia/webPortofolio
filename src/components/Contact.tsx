@@ -8,7 +8,7 @@ interface ContactProps {
   settings?: any;
 }
 
-export default function Contact({ lang }: ContactProps) {
+export default function Contact({ lang, settings }: ContactProps) {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -70,15 +70,31 @@ export default function Contact({ lang }: ContactProps) {
           transition={{ duration: 0.8 }}
         >
           <h2 className="font-headline-lg text-4xl md:text-headline-lg font-bold text-on-surface mb-4">
-            {lang === 'en' ? 'Get In' : 'Hubungi'}{' '}
-            <span className="text-gradient fuchsia-gradient">
-              {lang === 'en' ? 'Touch.' : 'Saya.'}
-            </span>
+            {(() => {
+              const contactTitle = settings
+                ? (lang === 'en' ? settings.contact_title_en : settings.contact_title_id)
+                : (lang === 'en' ? 'Get In Touch.' : 'Hubungi Saya.');
+              const titleWords = contactTitle.split(' ');
+              const lastWord = titleWords.length > 1 ? titleWords[titleWords.length - 1] : '';
+              const mainTitle = titleWords.length > 1 ? titleWords.slice(0, -1).join(' ') : contactTitle;
+              return (
+                <>
+                  {mainTitle}{' '}
+                  {lastWord && (
+                    <span className="text-gradient fuchsia-gradient">
+                      {lastWord}
+                    </span>
+                  )}
+                </>
+              );
+            })()}
           </h2>
           <p className="text-on-surface-variant font-body-md text-base mb-10 leading-relaxed font-normal max-w-md">
-            {lang === 'en'
-              ? "Have a project in mind or just want to say hi? I'm always open to discussing new opportunities."
-              : 'Punya proyek dalam pikiran atau hanya ingin menyapa? Saya selalu terbuka untuk mendiskusikan peluang baru.'}
+            {settings
+              ? (lang === 'en' ? settings.contact_desc_en : settings.contact_desc_id)
+              : (lang === 'en'
+                ? "Have a project in mind or just want to say hi? I'm always open to discussing new opportunities."
+                : 'Punya proyek dalam pikiran atau hanya ingin menyapa? Saya selalu terbuka untuk mendiskusikan peluang baru.')}
           </p>
 
           <div className="space-y-6">
@@ -92,7 +108,7 @@ export default function Contact({ lang }: ContactProps) {
                   {lang === 'en' ? 'Email Me' : 'Kirim Email'}
                 </p>
                 <p className="text-sm font-bold text-on-surface group-hover:text-primary transition-colors">
-                  hello@portonaila.dev
+                  {settings?.contact_email || 'hello@portonaila.dev'}
                 </p>
               </div>
             </div>

@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   User, Briefcase, Award, Sparkles, Mail, Trash2, 
-  Edit, Save, Upload, ShieldAlert, KeyRound, Loader2 
+  Edit, Save, Upload, ShieldAlert, KeyRound, Loader2,
+  Settings
 } from 'lucide-react';
 import type { HeroData, AboutData, ProjectData, ExperienceData, SkillData, StatData, ContactMessage, SettingsData } from '../../data/initialData';
 import confetti from 'canvas-confetti';
@@ -28,7 +29,7 @@ export default function Dashboard({ portfolioData, refreshData, lang }: Dashboar
   const [authError, setAuthError] = useState('');
 
   // Tab state
-  const [activeTab, setActiveTab] = useState<'hero' | 'about' | 'projects' | 'experiences' | 'skills' | 'stats' | 'messages'>('hero');
+  const [activeTab, setActiveTab] = useState<'hero' | 'about' | 'projects' | 'experiences' | 'skills' | 'stats' | 'messages' | 'settings'>('hero');
   const [messages, setMessages] = useState<ContactMessage[]>([]);
   const [loadingMessages, setLoadingMessages] = useState(false);
 
@@ -39,6 +40,7 @@ export default function Dashboard({ portfolioData, refreshData, lang }: Dashboar
   // Form states for edits
   const [heroForm, setHeroForm] = useState<HeroData>(portfolioData.hero);
   const [aboutForm, setAboutForm] = useState<AboutData>(portfolioData.about);
+  const [settingsForm, setSettingsForm] = useState<SettingsData>(portfolioData.settings);
   
   // Projects editing
   const [projectForm, setProjectForm] = useState<Partial<ProjectData>>({
@@ -69,6 +71,7 @@ export default function Dashboard({ portfolioData, refreshData, lang }: Dashboar
   useEffect(() => {
     if (portfolioData.hero) setHeroForm(portfolioData.hero);
     if (portfolioData.about) setAboutForm(portfolioData.about);
+    if (portfolioData.settings) setSettingsForm(portfolioData.settings);
   }, [portfolioData]);
 
   // Load messages if tab is messages
@@ -95,20 +98,30 @@ export default function Dashboard({ portfolioData, refreshData, lang }: Dashboar
     }
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (passcode === 'admin123') {
-      setIsAuthenticated(true);
-      setAuthError('');
-      // Dynamic success trigger
-      confetti({
-        particleCount: 50,
-        spread: 40,
-        origin: { y: 0.6 },
-        colors: ['#d946ef', '#f472b6'],
-      });
-    } else {
-      setAuthError(lang === 'en' ? 'Incorrect passcode. Try "admin123".' : 'Kode akses salah. Coba "admin123".');
+    try {
+      const msgUint8 = new TextEncoder().encode(passcode);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      
+      // SHA-256 hash of 'Pandacute1234'
+      if (hashHex === '8dc8a385d3161c31a4195a5cb7b0aea23d09bc7413ffda802ecc7a9d926557fe') {
+        setIsAuthenticated(true);
+        setAuthError('');
+        // Dynamic success trigger
+        confetti({
+          particleCount: 50,
+          spread: 40,
+          origin: { y: 0.6 },
+          colors: ['#d946ef', '#f472b6'],
+        });
+      } else {
+        setAuthError(lang === 'en' ? 'Incorrect passcode.' : 'Kode akses salah.');
+      }
+    } catch (err) {
+      setAuthError(lang === 'en' ? 'Encryption error occurred.' : 'Terjadi kesalahan enkripsi.');
     }
   };
 
@@ -357,6 +370,30 @@ export default function Dashboard({ portfolioData, refreshData, lang }: Dashboar
     }
   };
 
+  // SAVE Settings Details
+  const saveSettings = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    setActionError(null);
+    try {
+      const res = await fetch(`${apiHost}/api/settings`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settingsForm),
+      });
+      if (res.ok) {
+        await refreshData();
+        triggerConfetti();
+      } else {
+        throw new Error('Failed to update Settings');
+      }
+    } catch (err: any) {
+      setActionError(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const triggerConfetti = () => {
     confetti({
       particleCount: 50,
@@ -444,6 +481,7 @@ export default function Dashboard({ portfolioData, refreshData, lang }: Dashboar
               { id: 'skills', icon: Sparkles, label: 'Technical Stack' },
               { id: 'stats', icon: Award, label: 'Stats Counter' },
               { id: 'messages', icon: Mail, label: 'Inbox Messages' },
+              { id: 'settings', icon: Settings, label: 'Contact & Settings' },
             ].map((tab) => {
               const Icon = tab.icon;
               return (
@@ -1305,6 +1343,194 @@ export default function Dashboard({ portfolioData, refreshData, lang }: Dashboar
                   ))}
                 </div>
               )}
+            </div>
+          )}
+
+          {/* TAB 8: CONTACT & GLOBAL SETTINGS EDITOR */}
+          {activeTab === 'settings' && settingsForm && (
+            <div>
+              <h2 className="font-display text-xl font-bold mb-6 text-on-surface flex items-center gap-2">
+                <Settings className="w-5 h-5 text-primary" />
+                <span>{lang === 'en' ? 'Contact & Global Settings' : 'Kontak & Pengaturan Global'}</span>
+              </h2>
+
+              <form onSubmit={saveSettings} className="space-y-6">
+                
+                {/* Contact Settings Card */}
+                <div className="glass-card p-6 rounded-xl border border-white/5 bg-zinc-950/45 space-y-4">
+                  <h3 className="font-display text-sm font-bold text-primary uppercase tracking-wider">
+                    {lang === 'en' ? 'Contact Information' : 'Informasi Kontak'}
+                  </h3>
+                  
+                  <div className="flex flex-col space-y-1.5">
+                    <label className="text-[10px] font-bold uppercase text-on-surface-variant">
+                      {lang === 'en' ? 'Contact Email' : 'Email Kontak'}
+                    </label>
+                    <input
+                      type="email"
+                      value={settingsForm.contact_email || ''}
+                      onChange={(e) => setSettingsForm(prev => ({ ...prev, contact_email: e.target.value }))}
+                      className="bg-zinc-900 border border-white/5 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-primary/50 text-on-surface"
+                      placeholder="hello@example.com"
+                      required
+                    />
+                  </div>
+
+                  <div className="flex flex-col space-y-1.5">
+                    <label className="text-[10px] font-bold uppercase text-on-surface-variant">
+                      {lang === 'en' ? 'Contact Title (Indonesian - Auto-translated)' : 'Judul Kontak (Bahasa Indonesia - Diterjemahkan Otomatis)'}
+                    </label>
+                    <input
+                      type="text"
+                      value={settingsForm.contact_title_id || ''}
+                      onChange={(e) => setSettingsForm(prev => ({ ...prev, contact_title_id: e.target.value }))}
+                      className="bg-zinc-900 border border-white/5 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-primary/50 text-on-surface"
+                      placeholder="Hubungi Saya."
+                      required
+                    />
+                  </div>
+
+                  <div className="flex flex-col space-y-1.5">
+                    <label className="text-[10px] font-bold uppercase text-on-surface-variant">
+                      {lang === 'en' ? 'Contact Description (Indonesian - Auto-translated)' : 'Deskripsi Kontak (Bahasa Indonesia - Diterjemahkan Otomatis)'}
+                    </label>
+                    <textarea
+                      value={settingsForm.contact_desc_id || ''}
+                      onChange={(e) => setSettingsForm(prev => ({ ...prev, contact_desc_id: e.target.value }))}
+                      className="bg-zinc-900 border border-white/5 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-primary/50 text-on-surface"
+                      rows={3}
+                      placeholder="Punya proyek dalam pikiran atau hanya ingin menyapa?..."
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* General Brand / UI Settings Card */}
+                <div className="glass-card p-6 rounded-xl border border-white/5 bg-zinc-950/45 space-y-4">
+                  <h3 className="font-display text-sm font-bold text-primary uppercase tracking-wider">
+                    {lang === 'en' ? 'General & Brand Settings' : 'Pengaturan Umum & Brand'}
+                  </h3>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex flex-col space-y-1.5">
+                      <label className="text-[10px] font-bold uppercase text-on-surface-variant">Logo Text</label>
+                      <input
+                        type="text"
+                        value={settingsForm.logo_text || ''}
+                        onChange={(e) => setSettingsForm(prev => ({ ...prev, logo_text: e.target.value }))}
+                        className="bg-zinc-900 border border-white/5 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-primary/50 text-on-surface"
+                        required
+                      />
+                    </div>
+
+                    <div className="flex flex-col space-y-1.5">
+                      <label className="text-[10px] font-bold uppercase text-on-surface-variant">
+                        {lang === 'en' ? 'Footer Copyright Message (Indonesian)' : 'Pesan Hak Cipta Footer (Bahasa Indonesia)'}
+                      </label>
+                      <input
+                        type="text"
+                        value={settingsForm.footer_text_id || ''}
+                        onChange={(e) => setSettingsForm(prev => ({ ...prev, footer_text_id: e.target.value }))}
+                        className="bg-zinc-900 border border-white/5 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-primary/50 text-on-surface"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex flex-col space-y-1.5">
+                      <label className="text-[10px] font-bold uppercase text-on-surface-variant">
+                        {lang === 'en' ? 'Skills Section Title (Indonesian)' : 'Judul Bagian Keahlian (Bahasa Indonesia)'}
+                      </label>
+                      <input
+                        type="text"
+                        value={settingsForm.skills_title_id || ''}
+                        onChange={(e) => setSettingsForm(prev => ({ ...prev, skills_title_id: e.target.value }))}
+                        className="bg-zinc-900 border border-white/5 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-primary/50 text-on-surface"
+                        required
+                      />
+                    </div>
+
+                    <div className="flex flex-col space-y-1.5">
+                      <label className="text-[10px] font-bold uppercase text-on-surface-variant">
+                        {lang === 'en' ? 'Skills Section Description (Indonesian)' : 'Deskripsi Bagian Keahlian (Bahasa Indonesia)'}
+                      </label>
+                      <input
+                        type="text"
+                        value={settingsForm.skills_desc_id || ''}
+                        onChange={(e) => setSettingsForm(prev => ({ ...prev, skills_desc_id: e.target.value }))}
+                        className="bg-zinc-900 border border-white/5 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-primary/50 text-on-surface"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex flex-col space-y-1.5">
+                      <label className="text-[10px] font-bold uppercase text-on-surface-variant">
+                        {lang === 'en' ? 'Projects Section Title (Indonesian)' : 'Judul Bagian Proyek (Bahasa Indonesia)'}
+                      </label>
+                      <input
+                        type="text"
+                        value={settingsForm.projects_title_id || ''}
+                        onChange={(e) => setSettingsForm(prev => ({ ...prev, projects_title_id: e.target.value }))}
+                        className="bg-zinc-900 border border-white/5 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-primary/50 text-on-surface"
+                        required
+                      />
+                    </div>
+
+                    <div className="flex flex-col space-y-1.5">
+                      <label className="text-[10px] font-bold uppercase text-on-surface-variant">
+                        {lang === 'en' ? 'Projects Section Description (Indonesian)' : 'Deskripsi Bagian Proyek (Bahasa Indonesia)'}
+                      </label>
+                      <input
+                        type="text"
+                        value={settingsForm.projects_desc_id || ''}
+                        onChange={(e) => setSettingsForm(prev => ({ ...prev, projects_desc_id: e.target.value }))}
+                        className="bg-zinc-900 border border-white/5 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-primary/50 text-on-surface"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex flex-col space-y-1.5">
+                      <label className="text-[10px] font-bold uppercase text-on-surface-variant">
+                        {lang === 'en' ? 'Experience Section Title (Indonesian)' : 'Judul Bagian Pengalaman (Bahasa Indonesia)'}
+                      </label>
+                      <input
+                        type="text"
+                        value={settingsForm.experience_title_id || ''}
+                        onChange={(e) => setSettingsForm(prev => ({ ...prev, experience_title_id: e.target.value }))}
+                        className="bg-zinc-900 border border-white/5 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-primary/50 text-on-surface"
+                        required
+                      />
+                    </div>
+
+                    <div className="flex flex-col space-y-1.5">
+                      <label className="text-[10px] font-bold uppercase text-on-surface-variant">
+                        {lang === 'en' ? 'Experience Section Description (Indonesian)' : 'Deskripsi Bagian Pengalaman (Bahasa Indonesia)'}
+                      </label>
+                      <input
+                        type="text"
+                        value={settingsForm.experience_desc_id || ''}
+                        onChange={(e) => setSettingsForm(prev => ({ ...prev, experience_desc_id: e.target.value }))}
+                        className="bg-zinc-900 border border-white/5 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-primary/50 text-on-surface"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="px-6 py-2.5 fuchsia-gradient text-white rounded-xl font-bold hover:brightness-110 shadow-lg text-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                >
+                  {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+                  <span>{lang === 'en' ? 'Save Settings' : 'Simpan Pengaturan'}</span>
+                </button>
+              </form>
             </div>
           )}
 

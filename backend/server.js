@@ -222,6 +222,7 @@ async function initializeDatabase() {
         experience_desc_en TEXT NOT NULL,
         experience_desc_id TEXT NOT NULL,
         contact_email TEXT NOT NULL,
+        contact_phone TEXT DEFAULT '',
         contact_title_en TEXT NOT NULL,
         contact_title_id TEXT NOT NULL,
         contact_desc_en TEXT NOT NULL,
@@ -230,6 +231,14 @@ async function initializeDatabase() {
         footer_text_id TEXT NOT NULL
       )
     `);
+
+    // Migration: add contact_phone column if missing (for existing databases)
+    try {
+      await dbRun(`ALTER TABLE settings ADD COLUMN contact_phone TEXT DEFAULT ''`);
+      console.log('Added contact_phone column to settings table.');
+    } catch (e) {
+      // Column already exists, ignore
+    }
 
     console.log('Database tables verified/created successfully.');
     await seedDefaultData();
@@ -733,7 +742,7 @@ app.put('/api/settings', async (req, res) => {
     skills_title_id, skills_desc_id,
     projects_title_id, projects_desc_id,
     experience_title_id, experience_desc_id,
-    contact_email, contact_title_id, contact_desc_id,
+    contact_email, contact_phone, contact_title_id, contact_desc_id,
     footer_text_id
   } = req.body;
   try {
@@ -753,7 +762,7 @@ app.put('/api/settings', async (req, res) => {
         skills_title_en = ?, skills_title_id = ?, skills_desc_en = ?, skills_desc_id = ?, 
         projects_title_en = ?, projects_title_id = ?, projects_desc_en = ?, projects_desc_id = ?, 
         experience_title_en = ?, experience_title_id = ?, experience_desc_en = ?, experience_desc_id = ?, 
-        contact_email = ?, contact_title_en = ?, contact_title_id = ?, contact_desc_en = ?, contact_desc_id = ?, 
+        contact_email = ?, contact_phone = ?, contact_title_en = ?, contact_title_id = ?, contact_desc_en = ?, contact_desc_id = ?, 
         footer_text_en = ?, footer_text_id = ? 
        WHERE id = 1`,
       [
@@ -761,7 +770,7 @@ app.put('/api/settings', async (req, res) => {
         skills_title_en, skills_title_id, skills_desc_en, skills_desc_id,
         projects_title_en, projects_title_id, projects_desc_en, projects_desc_id,
         experience_title_en, experience_title_id, experience_desc_en, experience_desc_id,
-        contact_email, contact_title_en, contact_title_id, contact_desc_en, contact_desc_id,
+        contact_email, contact_phone || '', contact_title_en, contact_title_id, contact_desc_en, contact_desc_id,
         footer_text_en, footer_text_id
       ]
     );

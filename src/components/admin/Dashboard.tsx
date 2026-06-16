@@ -1405,6 +1405,19 @@ export default function Dashboard({ portfolioData, refreshData, lang }: Dashboar
 
                   <div className="flex flex-col space-y-1.5">
                     <label className="text-[10px] font-bold uppercase text-on-surface-variant">
+                      {lang === 'en' ? 'Phone Number' : 'Nomor Telepon'}
+                    </label>
+                    <input
+                      type="tel"
+                      value={settingsForm.contact_phone || ''}
+                      onChange={(e) => setSettingsForm(prev => ({ ...prev, contact_phone: e.target.value }))}
+                      className="bg-zinc-900 border border-white/5 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-primary/50 text-on-surface"
+                      placeholder="081399278392"
+                    />
+                  </div>
+
+                  <div className="flex flex-col space-y-1.5">
+                    <label className="text-[10px] font-bold uppercase text-on-surface-variant">
                       {lang === 'en' ? 'Contact Title (Indonesian - Auto-translated)' : 'Judul Kontak (Bahasa Indonesia - Diterjemahkan Otomatis)'}
                     </label>
                     <input

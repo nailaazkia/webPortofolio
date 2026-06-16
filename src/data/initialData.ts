@@ -190,6 +190,7 @@ export interface SettingsData {
   experience_desc_en: string;
   experience_desc_id: string;
   contact_email: string;
+  contact_phone: string;
   contact_title_en: string;
   contact_title_id: string;
   contact_desc_en: string;
@@ -213,6 +214,7 @@ export const initialSettings: SettingsData = {
   experience_desc_en: 'The milestones of my professional journey.',
   experience_desc_id: 'Tonggak sejarah perjalanan profesional saya.',
   contact_email: 'hello@portonaila.dev',
+  contact_phone: '',
   contact_title_en: 'Get In Touch.',
   contact_title_id: 'Hubungi Saya.',
   contact_desc_en: "Have a project in mind or just want to say hi? I'm always open to discussing new opportunities.",

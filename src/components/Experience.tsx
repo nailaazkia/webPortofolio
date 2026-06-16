@@ -40,8 +40,8 @@ export default function Experience({ experiences, lang }: ExperienceProps) {
           {/* Mobile: pinned left at 9px center of 18px dot */}
           {/* Desktop: center of container */}
           <div 
-            className="absolute top-0 bottom-0 w-[2px] left-[9px] md:left-1/2 md:-translate-x-[1px]"
-            style={{ background: 'linear-gradient(to bottom, transparent, rgba(255,255,255,0.08) 40px, rgba(255,255,255,0.08) calc(100% - 40px), transparent)' }}
+            className="absolute top-0 bottom-0 left-[9px] md:left-1/2 md:-translate-x-[1px]"
+            style={{ width: '2px', background: 'linear-gradient(to bottom, transparent 0%, rgba(217,70,239,0.3) 40px, rgba(217,70,239,0.3) calc(100% - 40px), transparent 100%)' }}
           />
 
           {experiences.map((exp, idx) => {

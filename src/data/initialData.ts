@@ -54,7 +54,7 @@ export interface SkillData {
   id?: number;
   name: string;
   icon_name: string;
-  category: 'frontend' | 'backend' | 'game' | 'other';
+  category: string;
   proficiency: number; // 0 to 100
 }
 

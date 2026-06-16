@@ -34,9 +34,10 @@ export default function Experience({ experiences, lang }: ExperienceProps) {
         </div>
 
         {/* Timeline Container */}
-        <div className="relative max-w-3xl mx-auto pl-4 pr-4 md:px-0">
-          {/* Vertical center bar */}
-          <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-[1px] bg-white/5 md:-translate-x-1/2" />
+        <div className="relative max-w-3xl mx-auto">
+          
+          {/* Vertical center bar — mobile: left side, desktop: center */}
+          <div className="absolute left-[11px] md:left-1/2 md:-translate-x-[0.5px] top-0 bottom-0 w-[1px] bg-white/10" />
 
           {experiences.map((exp, idx) => {
             const isEven = idx % 2 === 0;
@@ -44,30 +45,30 @@ export default function Experience({ experiences, lang }: ExperienceProps) {
             return (
               <div
                 key={exp.id || idx}
-                className={`relative mb-16 last:mb-0 flex flex-col md:flex-row ${
-                  isEven ? 'md:justify-start' : 'md:justify-end'
-                }`}
+                className="relative mb-16 last:mb-0"
               >
-                {/* Timeline node dot */}
+                {/* Timeline node dot — mobile: left side, desktop: center */}
                 <motion.div
                   initial={{ scale: 0 }}
                   whileInView={{ scale: 1 }}
                   viewport={{ once: true, margin: '-100px' }}
                   transition={{ type: 'spring' as const, stiffness: 200, damping: 10, delay: 0.1 }}
-                  className="absolute left-4 md:left-1/2 -translate-x-1/2 w-4 h-4 rounded-full fuchsia-gradient shadow-[0_0_15px_rgba(217,70,239,0.7)] z-10"
+                  className="absolute left-[4px] md:left-1/2 md:-translate-x-1/2 top-6 w-[16px] h-[16px] rounded-full fuchsia-gradient shadow-[0_0_15px_rgba(217,70,239,0.7)] z-10"
                 />
 
-                {/* Card wrapper */}
+                {/* Card — mobile: always right of line, desktop: alternating */}
                 <motion.div
-                  initial={{ opacity: 0, x: isEven ? -40 : 40 }}
+                  initial={{ opacity: 0, x: isEven ? -30 : 30 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true, margin: '-50px' }}
                   transition={{ type: 'spring' as const, stiffness: 70, damping: 14 }}
-                  className={`w-[calc(100%-2.5rem)] md:w-[45%] ml-10 md:ml-0 ${
-                    isEven ? 'md:pr-10 md:text-right' : 'md:pl-10 md:text-left'
-                  }`}
+                  className={`
+                    ml-9 mr-0
+                    md:ml-0 md:mr-0 md:w-[calc(50%-28px)]
+                    ${isEven ? 'md:text-right' : 'md:ml-auto md:text-left'}
+                  `}
                 >
-                  <div className="glass-card p-6 rounded-2xl border border-white/5 bg-zinc-900/10 hover:border-primary/10">
+                  <div className="glass-card p-6 rounded-2xl border border-white/5 bg-zinc-900/10 hover:border-primary/10 transition-colors">
                     <span className="text-primary font-bold text-xs tracking-wider mb-2 block select-none">
                       {exp.period}
                     </span>

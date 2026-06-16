@@ -25,7 +25,7 @@ export default function Projects({ projects, lang }: ProjectsProps) {
       <div className="max-w-container-max mx-auto relative z-10">
         
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
+        <div className="flex flex-col items-center text-center mb-12 gap-6">
           <div>
             <motion.h2
               initial={{ opacity: 0, y: 15 }}
@@ -48,7 +48,7 @@ export default function Projects({ projects, lang }: ProjectsProps) {
         </div>
 
         {/* Categories Filters */}
-        <div className="flex flex-wrap gap-2 mb-12">
+        <div className="flex flex-wrap gap-2 mb-12 justify-center">
           {categories.map((cat) => (
             <button
               key={cat}

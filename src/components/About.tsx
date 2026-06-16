@@ -30,10 +30,22 @@ export default function About({ data, lang }: AboutProps) {
             transition={{ duration: 0.8 }}
             className="font-headline-lg text-4xl md:text-headline-lg font-bold text-on-surface"
           >
-            {lang === 'en' ? 'Passionate About' : 'Sangat Terobsesi dengan'}{' '}
-            <span className="text-gradient fuchsia-gradient">
-              {lang === 'en' ? 'Problem Solving.' : 'Pemecahan Masalah.'}
-            </span>
+            {(() => {
+              const aboutTitle = lang === 'en' ? (data.title_en || 'Passionate About Problem Solving.') : (data.title_id || 'Sangat Terobsesi dengan Pemecahan Masalah.');
+              const titleWords = aboutTitle.split(' ');
+              const lastWord = titleWords.length > 1 ? titleWords[titleWords.length - 1] : '';
+              const mainTitle = titleWords.length > 1 ? titleWords.slice(0, -1).join(' ') : aboutTitle;
+              return (
+                <>
+                  {mainTitle}{' '}
+                  {lastWord && (
+                    <span className="text-gradient fuchsia-gradient">
+                      {lastWord}
+                    </span>
+                  )}
+                </>
+              );
+            })()}
           </motion.h2>
         </div>
 

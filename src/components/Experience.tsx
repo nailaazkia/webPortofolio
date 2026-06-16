@@ -18,7 +18,7 @@ export default function Experience({ experiences, lang }: ExperienceProps) {
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="font-headline-lg text-4xl md:text-headline-lg font-bold text-on-surface mb-3"
+            className="font-headline-lg text-3xl sm:text-4xl md:text-headline-lg font-bold text-on-surface mb-3 break-words"
           >
             {lang === 'en' ? 'Experience & Education' : 'Pengalaman & Pendidikan'}
           </motion.h2>
@@ -34,9 +34,9 @@ export default function Experience({ experiences, lang }: ExperienceProps) {
         </div>
 
         {/* Timeline Container */}
-        <div className="relative max-w-3xl mx-auto pl-8 md:pl-0">
+        <div className="relative max-w-3xl mx-auto pl-4 md:pl-0">
           {/* Vertical center bar */}
-          <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-[1px] bg-white/5 md:-translate-x-1/2" />
+          <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-[1px] bg-white/5 md:-translate-x-1/2" />
 
           {experiences.map((exp, idx) => {
             const isEven = idx % 2 === 0;
@@ -54,7 +54,7 @@ export default function Experience({ experiences, lang }: ExperienceProps) {
                   whileInView={{ scale: 1 }}
                   viewport={{ once: true, margin: '-100px' }}
                   transition={{ type: 'spring' as const, stiffness: 200, damping: 10, delay: 0.1 }}
-                  className="absolute left-8 md:left-1/2 -translate-x-[9px] md:-translate-x-1/2 w-4 h-4 rounded-full fuchsia-gradient shadow-[0_0_15px_rgba(217,70,239,0.7)] z-10"
+                  className="absolute left-4 md:left-1/2 -translate-x-1/2 w-4 h-4 rounded-full fuchsia-gradient shadow-[0_0_15px_rgba(217,70,239,0.7)] z-10"
                 />
 
                 {/* Card wrapper */}
@@ -63,7 +63,7 @@ export default function Experience({ experiences, lang }: ExperienceProps) {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true, margin: '-50px' }}
                   transition={{ type: 'spring' as const, stiffness: 70, damping: 14 }}
-                  className={`w-full md:w-[45%] ml-8 md:ml-0 ${
+                  className={`w-full md:w-[45%] ml-10 md:ml-0 ${
                     isEven ? 'md:pr-10 md:text-right' : 'md:pl-10 md:text-left'
                   }`}
                 >

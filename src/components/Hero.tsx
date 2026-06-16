@@ -58,17 +58,17 @@ export default function Hero({ data, lang }: HeroProps) {
           </p>
 
           {/* Call to Actions */}
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
             <button
               onClick={() => handleScrollTo('work')}
-              className="fuchsia-gradient px-8 py-3.5 rounded-xl font-semibold text-white hover:brightness-110 shadow-[0_0_20px_rgba(217,70,239,0.35)] transition-all flex items-center select-none"
+              className="fuchsia-gradient px-8 py-3.5 rounded-xl font-semibold text-white hover:brightness-110 shadow-[0_0_20px_rgba(217,70,239,0.35)] transition-all flex items-center justify-center text-center select-none w-full sm:w-auto"
             >
               {lang === 'en' ? 'See Projects' : 'Lihat Proyek'}
             </button>
             
             <button
               onClick={() => handleScrollTo('contact')}
-              className="glass-card px-8 py-3.5 rounded-xl font-semibold text-on-surface border border-white/10 hover:bg-white/5 transition-all flex items-center select-none"
+              className="glass-card px-8 py-3.5 rounded-xl font-semibold text-on-surface border border-white/10 hover:bg-white/5 transition-all flex items-center justify-center text-center select-none w-full sm:w-auto"
             >
               {lang === 'en' ? 'Contact Me' : 'Hubungi Saya'}
             </button>

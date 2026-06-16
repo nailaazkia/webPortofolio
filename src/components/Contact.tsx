@@ -69,7 +69,7 @@ export default function Contact({ lang, settings }: ContactProps) {
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
         >
-          <h2 className="font-headline-lg text-4xl md:text-headline-lg font-bold text-on-surface mb-4">
+          <h2 className="font-headline-lg text-3xl sm:text-4xl md:text-headline-lg font-bold text-on-surface mb-4 break-words">
             {(() => {
               const contactTitle = settings
                 ? (lang === 'en' ? settings.contact_title_en : settings.contact_title_id)

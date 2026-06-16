@@ -28,7 +28,7 @@ export default function About({ data, lang }: AboutProps) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="font-headline-lg text-4xl md:text-headline-lg font-bold text-on-surface"
+            className="font-headline-lg text-3xl sm:text-4xl md:text-headline-lg font-bold text-on-surface break-words"
           >
             {(() => {
               const aboutTitle = lang === 'en' ? (data.title_en || 'Passionate About Problem Solving.') : (data.title_id || 'Sangat Terobsesi dengan Pemecahan Masalah.');

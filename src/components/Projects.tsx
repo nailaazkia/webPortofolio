@@ -31,7 +31,7 @@ export default function Projects({ projects, lang }: ProjectsProps) {
               initial={{ opacity: 0, y: 15 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="font-headline-lg text-4xl md:text-headline-lg font-bold text-on-surface mb-3"
+              className="font-headline-lg text-3xl sm:text-4xl md:text-headline-lg font-bold text-on-surface mb-3 break-words"
             >
               {lang === 'en' ? 'Featured Projects' : 'Proyek Unggulan'}
             </motion.h2>

@@ -1145,15 +1145,31 @@ export default function Dashboard({ portfolioData, refreshData, lang }: Dashboar
                   <div className="flex flex-col space-y-1.5">
                     <label className="text-[10px] font-bold uppercase text-on-surface-variant">Category</label>
                     <select
-                      value={skillForm.category}
-                      onChange={(e) => setSkillForm(prev => ({ ...prev, category: e.target.value as any }))}
+                      value={['frontend', 'backend', 'game'].includes(skillForm.category || '') ? skillForm.category : '__custom__'}
+                      onChange={(e) => {
+                        if (e.target.value === '__custom__') {
+                          setSkillForm(prev => ({ ...prev, category: '' as any }));
+                        } else {
+                          setSkillForm(prev => ({ ...prev, category: e.target.value as any }));
+                        }
+                      }}
                       className="bg-zinc-900 border border-white/5 rounded-xl px-4 py-2 text-xs focus:outline-none text-on-surface"
                     >
                       <option value="frontend">Frontend</option>
                       <option value="backend">Backend</option>
                       <option value="game">Game Dev</option>
-                      <option value="other">Other / Tools</option>
+                      <option value="__custom__">Other / Custom...</option>
                     </select>
+                    {!['frontend', 'backend', 'game'].includes(skillForm.category || '') && (
+                      <input
+                        type="text"
+                        value={skillForm.category === '__custom__' ? '' : (skillForm.category || '')}
+                        onChange={(e) => setSkillForm(prev => ({ ...prev, category: e.target.value as any }))}
+                        className="bg-zinc-900 border border-white/5 rounded-xl px-4 py-2 text-xs focus:outline-none mt-1.5"
+                        placeholder="Ketik nama kategori, misal: Design, DevOps..."
+                        autoFocus
+                      />
+                    )}
                   </div>
                 </div>
 

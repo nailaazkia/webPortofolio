@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import type { SkillData } from '../data/initialData';
+import { getTechIconUrl } from '../utils/techIcons';
 
 interface SkillsProps {
   skills: SkillData[];
@@ -60,39 +61,38 @@ export default function Skills({ skills, lang }: SkillsProps) {
           viewport={{ once: true, margin: '-50px' }}
           className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-6 lg:gap-8"
         >
-          {skills.map((skill) => (
-            <motion.div
-              key={skill.id || skill.name}
-              variants={itemVariants}
-              className="glass-card p-6 rounded-2xl flex flex-col items-center group cursor-default select-none border border-white/5 bg-zinc-900/20"
-            >
-              {/* Icon container with hover fuchsia shadow */}
-              <div className="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center mb-4 border border-white/5 group-hover:shadow-[0_0_25px_rgba(217,70,239,0.3)] group-hover:border-primary/20 group-hover:scale-110 transition-all duration-300">
-                <span className="material-symbols-outlined text-[32px] text-primary group-hover:text-secondary transition-colors">
-                  {skill.icon_name}
+          {skills.map((skill) => {
+            const iconUrl = getTechIconUrl(skill.name);
+            
+            return (
+              <motion.div
+                key={skill.id || skill.name}
+                variants={itemVariants}
+                className="glass-card p-6 rounded-2xl flex flex-col items-center group cursor-default select-none border border-white/5 bg-zinc-900/20"
+              >
+                {/* Tech Logo */}
+                <div className="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center mb-4 border border-white/5 group-hover:shadow-[0_0_25px_rgba(217,70,239,0.3)] group-hover:border-primary/20 group-hover:scale-110 transition-all duration-300 overflow-hidden">
+                  {iconUrl ? (
+                    <img
+                      src={iconUrl}
+                      alt={skill.name}
+                      className="w-9 h-9 object-contain drop-shadow-lg"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <span className="material-symbols-outlined text-[32px] text-primary group-hover:text-secondary transition-colors">
+                      {skill.icon_name || 'code'}
+                    </span>
+                  )}
+                </div>
+                
+                {/* Skill Name */}
+                <span className="font-label-md text-sm font-bold text-on-surface text-center">
+                  {skill.name}
                 </span>
-              </div>
-              
-              {/* Skill Name */}
-              <span className="font-label-md text-sm font-bold text-on-surface text-center mb-3">
-                {skill.name}
-              </span>
-
-              {/* Animated Proficiency Bar */}
-              <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  whileInView={{ width: `${skill.proficiency}%` }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1.2, delay: 0.2, ease: "easeOut" }}
-                  className="h-full fuchsia-gradient rounded-full"
-                />
-              </div>
-              <span className="text-[10px] font-bold text-on-surface-variant mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                {skill.proficiency}%
-              </span>
-            </motion.div>
-          ))}
+              </motion.div>
+            );
+          })}
         </motion.div>
       </div>
       

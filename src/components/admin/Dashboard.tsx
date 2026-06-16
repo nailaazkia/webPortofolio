@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import type { HeroData, AboutData, ProjectData, ExperienceData, SkillData, StatData, ContactMessage, SettingsData } from '../../data/initialData';
 import confetti from 'canvas-confetti';
+import { getTechIconUrl, hasTechIcon } from '../../utils/techIcons';
 
 interface DashboardProps {
   portfolioData: {
@@ -57,7 +58,7 @@ export default function Dashboard({ portfolioData, refreshData, lang }: Dashboar
 
   // Skills editing
   const [skillForm, setSkillForm] = useState<Partial<SkillData>>({
-    name: '', icon_name: '', category: 'frontend', proficiency: 80
+    name: '', icon_name: '', category: 'frontend', proficiency: 0
   });
   const [editingSkillId, setEditingSkillId] = useState<number | null>(null);
 
@@ -279,7 +280,9 @@ export default function Dashboard({ portfolioData, refreshData, lang }: Dashboar
   // CREATE / UPDATE Skill
   const saveSkill = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!skillForm.name || !skillForm.icon_name) return;
+    if (!skillForm.name) return;
+    // Auto-set icon_name from skill name for backward compatibility
+    const autoIconName = skillForm.name.toLowerCase().replace(/[^a-z0-9]/g, '');
     setSaving(true);
     setActionError(null);
     try {
@@ -291,11 +294,11 @@ export default function Dashboard({ portfolioData, refreshData, lang }: Dashboar
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(skillForm),
+        body: JSON.stringify({ ...skillForm, icon_name: autoIconName, proficiency: skillForm.proficiency || 0 }),
       });
       if (res.ok) {
         await refreshData();
-        setSkillForm({ name: '', icon_name: '', category: 'frontend', proficiency: 80 });
+        setSkillForm({ name: '', icon_name: '', category: 'frontend', proficiency: 0 });
         setEditingSkillId(null);
         triggerConfetti();
       } else {
@@ -1127,26 +1130,15 @@ export default function Dashboard({ portfolioData, refreshData, lang }: Dashboar
                 <h3 className="font-display text-xs font-bold text-primary uppercase tracking-wider">
                   {editingSkillId ? 'Edit Skill Details' : 'Add New Skill'}
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex flex-col space-y-1.5">
-                    <label className="text-[10px] font-bold uppercase text-on-surface-variant">Skill Name</label>
+                    <label className="text-[10px] font-bold uppercase text-on-surface-variant">Skill / Technology Name</label>
                     <input
                       type="text"
                       value={skillForm.name}
                       onChange={(e) => setSkillForm(prev => ({ ...prev, name: e.target.value }))}
                       className="bg-zinc-900 border border-white/5 rounded-xl px-4 py-2 text-xs focus:outline-none"
-                      placeholder="React"
-                      required
-                    />
-                  </div>
-                  <div className="flex flex-col space-y-1.5">
-                    <label className="text-[10px] font-bold uppercase text-on-surface-variant">Icon Key (Material Icon)</label>
-                    <input
-                      type="text"
-                      value={skillForm.icon_name}
-                      onChange={(e) => setSkillForm(prev => ({ ...prev, icon_name: e.target.value }))}
-                      className="bg-zinc-900 border border-white/5 rounded-xl px-4 py-2 text-xs focus:outline-none"
-                      placeholder="dynamic_form"
+                      placeholder="e.g. React, Python, Unity, Figma..."
                       required
                     />
                   </div>
@@ -1165,20 +1157,30 @@ export default function Dashboard({ portfolioData, refreshData, lang }: Dashboar
                   </div>
                 </div>
 
-                <div className="flex flex-col space-y-2">
-                  <div className="flex justify-between text-[10px] font-bold uppercase text-on-surface-variant">
-                    <span>Proficiency Level</span>
-                    <span>{skillForm.proficiency}%</span>
+                {/* Live Logo Preview */}
+                {skillForm.name && (
+                  <div className="flex items-center gap-3 p-3 bg-zinc-900/60 rounded-xl border border-white/5">
+                    <div className="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center border border-white/5 overflow-hidden">
+                      {getTechIconUrl(skillForm.name || '') ? (
+                        <img
+                          src={getTechIconUrl(skillForm.name || '')!}
+                          alt={skillForm.name}
+                          className="w-7 h-7 object-contain"
+                        />
+                      ) : (
+                        <span className="material-symbols-outlined text-lg text-on-surface-variant">code</span>
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold text-on-surface">{skillForm.name}</p>
+                      {hasTechIcon(skillForm.name || '') ? (
+                        <span className="text-[9px] font-bold text-emerald-400">✓ Logo ditemukan otomatis</span>
+                      ) : (
+                        <span className="text-[9px] font-bold text-amber-400">⚠ Logo tidak ditemukan, akan pakai ikon default</span>
+                      )}
+                    </div>
                   </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    value={skillForm.proficiency}
-                    onChange={(e) => setSkillForm(prev => ({ ...prev, proficiency: parseInt(e.target.value) }))}
-                    className="w-full accent-primary bg-zinc-900 rounded-lg h-2"
-                  />
-                </div>
+                )}
 
                 <div className="flex gap-2">
                   <button type="submit" className="px-6 py-2 fuchsia-gradient text-white rounded-xl font-bold text-xs flex items-center gap-1 cursor-pointer">
@@ -1186,7 +1188,7 @@ export default function Dashboard({ portfolioData, refreshData, lang }: Dashboar
                     <span>{editingSkillId ? 'Save Changes' : 'Add Skill'}</span>
                   </button>
                   {editingSkillId && (
-                    <button type="button" onClick={() => { setEditingSkillId(null); setSkillForm({ name: '', icon_name: '', category: 'frontend', proficiency: 80 }); }} className="px-6 py-2 bg-white/5 text-on-surface-variant rounded-xl font-bold border border-white/5 text-xs">
+                    <button type="button" onClick={() => { setEditingSkillId(null); setSkillForm({ name: '', icon_name: '', category: 'frontend', proficiency: 0 }); }} className="px-6 py-2 bg-white/5 text-on-surface-variant rounded-xl font-bold border border-white/5 text-xs">
                       Cancel
                     </button>
                   )}
@@ -1194,25 +1196,34 @@ export default function Dashboard({ portfolioData, refreshData, lang }: Dashboar
               </form>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {portfolioData.skills.map((s) => (
-                  <div key={s.id} className="flex items-center justify-between p-4 bg-zinc-900/40 rounded-xl border border-white/5">
-                    <div className="flex items-center gap-3">
-                      <span className="material-symbols-outlined text-xl text-primary">{s.icon_name}</span>
-                      <div>
-                        <h4 className="text-xs font-bold text-on-surface">{s.name}</h4>
-                        <span className="text-[8px] font-bold text-on-surface-variant uppercase bg-white/5 px-2 py-0.5 rounded">{s.category} • {s.proficiency}%</span>
+                {portfolioData.skills.map((s) => {
+                  const logoUrl = getTechIconUrl(s.name);
+                  return (
+                    <div key={s.id} className="flex items-center justify-between p-4 bg-zinc-900/40 rounded-xl border border-white/5">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center border border-white/5 overflow-hidden">
+                          {logoUrl ? (
+                            <img src={logoUrl} alt={s.name} className="w-5 h-5 object-contain" />
+                          ) : (
+                            <span className="material-symbols-outlined text-lg text-primary">code</span>
+                          )}
+                        </div>
+                        <div>
+                          <h4 className="text-xs font-bold text-on-surface">{s.name}</h4>
+                          <span className="text-[8px] font-bold text-on-surface-variant uppercase bg-white/5 px-2 py-0.5 rounded">{s.category}</span>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <button onClick={() => { setEditingSkillId(s.id!); setSkillForm(s); }} className="p-1.5 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 rounded border border-blue-500/10">
+                          <Edit className="w-3.5 h-3.5" />
+                        </button>
+                        <button onClick={() => deleteSkill(s.id!)} className="p-1.5 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded border border-red-500/10">
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
                       </div>
                     </div>
-                    <div className="flex gap-2">
-                      <button onClick={() => { setEditingSkillId(s.id!); setSkillForm(s); }} className="p-1.5 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 rounded border border-blue-500/10">
-                        <Edit className="w-3.5 h-3.5" />
-                      </button>
-                      <button onClick={() => deleteSkill(s.id!)} className="p-1.5 bg-red-500/10 text-red-400 hover:bg-red-500/20 rounded border border-red-500/10">
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}

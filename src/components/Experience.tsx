@@ -34,7 +34,7 @@ export default function Experience({ experiences, lang }: ExperienceProps) {
         </div>
 
         {/* Timeline Container */}
-        <div className="relative max-w-3xl mx-auto pl-4 md:pl-0">
+        <div className="relative max-w-3xl mx-auto pl-4 pr-4 md:px-0">
           {/* Vertical center bar */}
           <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-[1px] bg-white/5 md:-translate-x-1/2" />
 
@@ -63,7 +63,7 @@ export default function Experience({ experiences, lang }: ExperienceProps) {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true, margin: '-50px' }}
                   transition={{ type: 'spring' as const, stiffness: 70, damping: 14 }}
-                  className={`w-full md:w-[45%] ml-10 md:ml-0 ${
+                  className={`w-[calc(100%-2.5rem)] md:w-[45%] ml-10 md:ml-0 ${
                     isEven ? 'md:pr-10 md:text-right' : 'md:pl-10 md:text-left'
                   }`}
                 >

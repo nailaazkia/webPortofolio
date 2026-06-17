@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Phone, Send, CheckCircle2, Loader2 } from 'lucide-react';
+import { Mail, Phone, Linkedin, Send, CheckCircle2, Loader2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 interface ContactProps {
@@ -129,7 +129,28 @@ export default function Contact({ lang, settings }: ContactProps) {
                 </div>
               </div>
             )}
-          </div>
+
+            {/* LinkedIn Contact Detail */}
+            {settings?.contact_linkedin && (
+              <a
+                href={settings.contact_linkedin.startsWith('http') ? settings.contact_linkedin : `https://${settings.contact_linkedin}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-4 group cursor-pointer w-fit"
+              >
+                <div className="w-12 h-12 glass-card rounded-full flex items-center justify-center text-primary group-hover:bg-primary/10 border border-white/5 transition-colors">
+                  <Linkedin className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">
+                    LinkedIn
+                  </p>
+                  <p className="text-sm font-bold text-on-surface group-hover:text-primary transition-colors">
+                    {settings.contact_linkedin.replace(/^https?:\/\/(www\.)?linkedin\.com\/in\//i, '').replace(/\/$/, '') || 'LinkedIn Profile'}
+                  </p>
+                </div>
+              </a>
+            )}
         </motion.div>
 
         {/* Right Side: Form Container */}

@@ -13,8 +13,8 @@ import Spotlight from './components/Spotlight';
 import SmoothScroll from './components/SmoothScroll';
 import Dashboard from './components/admin/Dashboard';
 
-import { 
-  initialHero, initialAbout, initialProjects, 
+import {
+  initialHero, initialAbout, initialProjects,
   initialExperience, initialSkills, initialStats, initialSettings
 } from './data/initialData';
 import type {
@@ -44,7 +44,7 @@ export default function App() {
   const [skills, setSkills] = useState<SkillData[]>(initialSkills);
   const [stats, setStats] = useState<StatData[]>(initialStats);
   const [settings, setSettings] = useState<SettingsData>(initialSettings);
-  
+
   const [loading, setLoading] = useState(true);
 
   const apiHost = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '';
@@ -109,7 +109,7 @@ export default function App() {
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 rounded-full border-2 border-primary/20 border-t-primary animate-spin" />
           <span className="text-xs font-bold text-on-surface-variant uppercase tracking-widest animate-pulse">
-            Loading Portfolio...
+            Loading Portofolio...
           </span>
         </div>
       </div>
@@ -120,16 +120,16 @@ export default function App() {
     <div className="min-h-screen bg-background text-on-surface select-none relative">
       {/* Background Static Grid */}
       <div id="bg-grid" />
-      
+
       {/* Interactive Cursor Spotlight */}
       <Spotlight />
 
       {/* Floating Header */}
-      <Navbar 
-        isAdminMode={isAdminMode} 
-        setIsAdminMode={setIsAdminMode} 
-        lang={lang} 
-        setLang={setLang} 
+      <Navbar
+        isAdminMode={isAdminMode}
+        setIsAdminMode={setIsAdminMode}
+        lang={lang}
+        setLang={setLang}
         theme={theme}
         setTheme={setTheme}
         settings={settings}
@@ -145,10 +145,10 @@ export default function App() {
             exit={{ opacity: 0, y: -15 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           >
-            <Dashboard 
-              portfolioData={{ hero, about, projects, experiences, skills, stats, settings }} 
-              refreshData={fetchPortfolioData} 
-              lang={lang} 
+            <Dashboard
+              portfolioData={{ hero, about, projects, experiences, skills, stats, settings }}
+              refreshData={fetchPortfolioData}
+              lang={lang}
             />
           </motion.main>
         ) : (

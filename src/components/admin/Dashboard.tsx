@@ -1391,6 +1391,20 @@ export default function Dashboard({ portfolioData, refreshData, lang }: Dashboar
                   
                   <div className="flex flex-col space-y-1.5">
                     <label className="text-[10px] font-bold uppercase text-on-surface-variant">
+                      {lang === 'en' ? 'Contact Description (Indonesian - Auto-translated)' : 'Deskripsi Kontak (Bahasa Indonesia - Diterjemahkan Otomatis)'}
+                    </label>
+                    <textarea
+                      value={settingsForm.contact_desc_id || ''}
+                      onChange={(e) => setSettingsForm(prev => ({ ...prev, contact_desc_id: e.target.value }))}
+                      className="bg-zinc-900 border border-white/5 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-primary/50 text-on-surface"
+                      rows={3}
+                      placeholder="Punya proyek dalam pikiran atau hanya ingin menyapa?..."
+                      required
+                    />
+                  </div>
+
+                  <div className="flex flex-col space-y-1.5">
+                    <label className="text-[10px] font-bold uppercase text-on-surface-variant">
                       {lang === 'en' ? 'Contact Email' : 'Email Kontak'}
                     </label>
                     <input
@@ -1418,29 +1432,14 @@ export default function Dashboard({ portfolioData, refreshData, lang }: Dashboar
 
                   <div className="flex flex-col space-y-1.5">
                     <label className="text-[10px] font-bold uppercase text-on-surface-variant">
-                      {lang === 'en' ? 'Contact Title (Indonesian - Auto-translated)' : 'Judul Kontak (Bahasa Indonesia - Diterjemahkan Otomatis)'}
+                      LinkedIn URL
                     </label>
                     <input
                       type="text"
-                      value={settingsForm.contact_title_id || ''}
-                      onChange={(e) => setSettingsForm(prev => ({ ...prev, contact_title_id: e.target.value }))}
+                      value={settingsForm.contact_linkedin || ''}
+                      onChange={(e) => setSettingsForm(prev => ({ ...prev, contact_linkedin: e.target.value }))}
                       className="bg-zinc-900 border border-white/5 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-primary/50 text-on-surface"
-                      placeholder="Hubungi Saya."
-                      required
-                    />
-                  </div>
-
-                  <div className="flex flex-col space-y-1.5">
-                    <label className="text-[10px] font-bold uppercase text-on-surface-variant">
-                      {lang === 'en' ? 'Contact Description (Indonesian - Auto-translated)' : 'Deskripsi Kontak (Bahasa Indonesia - Diterjemahkan Otomatis)'}
-                    </label>
-                    <textarea
-                      value={settingsForm.contact_desc_id || ''}
-                      onChange={(e) => setSettingsForm(prev => ({ ...prev, contact_desc_id: e.target.value }))}
-                      className="bg-zinc-900 border border-white/5 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-primary/50 text-on-surface"
-                      rows={3}
-                      placeholder="Punya proyek dalam pikiran atau hanya ingin menyapa?..."
-                      required
+                      placeholder="linkedin.com/in/username"
                     />
                   </div>
                 </div>

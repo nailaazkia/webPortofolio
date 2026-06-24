@@ -26,28 +26,6 @@ const pgUrl = 'postgresql://postgres.cxrsgugomkuepwjlhyju:Pandacute1234-@aws-1-a
 let db;
 let pool;
 
-if (isPostgres) {
-  pool = new Pool({
-    connectionString: pgUrl,
-    ssl: {
-      rejectUnauthorized: false
-    }
-  });
-  console.log('Connected to online Supabase PostgreSQL database.');
-  // Initialize Database
-  initializeDatabase();
-} else {
-  const dbPath = path.join(__dirname, 'database.sqlite');
-  db = new sqlite3.Database(dbPath, (err) => {
-    if (err) {
-      console.error('Error opening SQLite database:', err.message);
-    } else {
-      console.log('Connected to SQLite database at:', dbPath);
-      initializeDatabase();
-    }
-  });
-}
-
 // Helper for running SQL promises (supporting both SQLite and PostgreSQL)
 const dbRun = async (sql, params = []) => {
   if (isPostgres) {
@@ -107,6 +85,29 @@ const dbGet = async (sql, params = []) => {
     });
   }
 };
+
+// Database Connection Startup
+if (isPostgres) {
+  pool = new Pool({
+    connectionString: pgUrl,
+    ssl: {
+      rejectUnauthorized: false
+    }
+  });
+  console.log('Connected to online Supabase PostgreSQL database.');
+  // Initialize Database
+  initializeDatabase();
+} else {
+  const dbPath = path.join(__dirname, 'database.sqlite');
+  db = new sqlite3.Database(dbPath, (err) => {
+    if (err) {
+      console.error('Error opening SQLite database:', err.message);
+    } else {
+      console.log('Connected to SQLite database at:', dbPath);
+      initializeDatabase();
+    }
+  });
+}
 
 // Database Initialization & Seeding
 async function initializeDatabase() {
@@ -223,6 +224,7 @@ async function initializeDatabase() {
         experience_desc_id TEXT NOT NULL,
         contact_email TEXT NOT NULL,
         contact_phone TEXT DEFAULT '',
+        contact_linkedin TEXT DEFAULT '',
         contact_title_en TEXT NOT NULL,
         contact_title_id TEXT NOT NULL,
         contact_desc_en TEXT NOT NULL,
@@ -238,6 +240,32 @@ async function initializeDatabase() {
       console.log('Added contact_phone column to settings table.');
     } catch (e) {
       // Column already exists, ignore
+    }
+
+    // Migration: add contact_linkedin column if missing
+    try {
+      await dbRun(`ALTER TABLE settings ADD COLUMN contact_linkedin TEXT DEFAULT ''`);
+      console.log('Added contact_linkedin column to settings table.');
+    } catch (e) {
+      // Column already exists, ignore
+    }
+
+    // Auto-migration for contact_title containing phone number
+    try {
+      const currentSettings = await dbGet('SELECT * FROM settings LIMIT 1');
+      if (currentSettings) {
+        const titleId = (currentSettings.contact_title_id || '').trim();
+        const isPhoneNum = /^[0-9+\s-]{7,20}$/.test(titleId);
+        if (isPhoneNum) {
+          console.log(`Migrating phone number "${titleId}" from contact_title_id to contact_phone...`);
+          await dbRun(
+            `UPDATE settings SET contact_phone = ?, contact_title_id = ?, contact_title_en = ? WHERE id = 1`,
+            [titleId, 'Hubungi Saya.', 'Get In Touch.']
+          );
+        }
+      }
+    } catch (e) {
+      console.error('Error migrating contact title:', e);
     }
 
     console.log('Database tables verified/created successfully.');
@@ -742,7 +770,7 @@ app.put('/api/settings', async (req, res) => {
     skills_title_id, skills_desc_id,
     projects_title_id, projects_desc_id,
     experience_title_id, experience_desc_id,
-    contact_email, contact_phone, contact_title_id, contact_desc_id,
+    contact_email, contact_phone, contact_linkedin, contact_title_id, contact_desc_id,
     footer_text_id
   } = req.body;
   try {
@@ -762,7 +790,7 @@ app.put('/api/settings', async (req, res) => {
         skills_title_en = ?, skills_title_id = ?, skills_desc_en = ?, skills_desc_id = ?, 
         projects_title_en = ?, projects_title_id = ?, projects_desc_en = ?, projects_desc_id = ?, 
         experience_title_en = ?, experience_title_id = ?, experience_desc_en = ?, experience_desc_id = ?, 
-        contact_email = ?, contact_phone = ?, contact_title_en = ?, contact_title_id = ?, contact_desc_en = ?, contact_desc_id = ?, 
+        contact_email = ?, contact_phone = ?, contact_linkedin = ?, contact_title_en = ?, contact_title_id = ?, contact_desc_en = ?, contact_desc_id = ?, 
         footer_text_en = ?, footer_text_id = ? 
        WHERE id = 1`,
       [
@@ -770,7 +798,7 @@ app.put('/api/settings', async (req, res) => {
         skills_title_en, skills_title_id, skills_desc_en, skills_desc_id,
         projects_title_en, projects_title_id, projects_desc_en, projects_desc_id,
         experience_title_en, experience_title_id, experience_desc_en, experience_desc_id,
-        contact_email, contact_phone || '', contact_title_en, contact_title_id, contact_desc_en, contact_desc_id,
+        contact_email, contact_phone || '', contact_linkedin || '', contact_title_en, contact_title_id, contact_desc_en, contact_desc_id,
         footer_text_en, footer_text_id
       ]
     );
